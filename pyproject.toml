@@ -3,7 +3,7 @@ requires = ["setuptools>=67.0"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "grammateus"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
     {name="Alexander Fedotov", email="alex.fedotov@aol.com"},
 ]
@@ -20,8 +20,8 @@ dependencies = [
     "requests >= 2.31.0"
 ]
 [project.optional-dependencies]
-openai_native = ["openai >= 1.13.3"]
-anthropic_native = ["anthropic >= 0.19.1"]
+openai = ["openai >= 1.13.3"]
+anthropic = ["anthropic >= 0.19.1"]
 gemini_google = ["google-generativeai >= 0.4.0"]
 [project.urls]
 "Homepage" = "https://github.com/multilogue/grammateus"
