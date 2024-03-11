@@ -28,20 +28,40 @@ class Grammateus():
 
     def _read_records(self):
         with jsonlines.open(file=self.location, mode='r') as reader:
-            self.records = [line for line in reader.iter()]
+            self.records = [loads(line) for line in reader.iter()]
 
     def _record_one(self, record: dict):
+        self.records.append(record)
         serialized_record = dumps(record)
         with jsonlines.open(file=self.location,
                             mode='a') as writer:
             writer.write(serialized_record)
 
+    def _record_one_json(self, record: str):
+        record_dict = loads(record)
+        self.records.append(record_dict)
+        with jsonlines.open(file=self.location,
+                            mode='a') as writer:
+            writer.write(record)
+
     def _record_many(self, records_list):
         with jsonlines.open(file=self.location,
                             mode='a') as writer:
             for record in records_list:
+                self.records.append(record)
                 serialized_record = dumps(record)
                 writer.write(serialized_record)
+
+    def record(self, record):
+        if isinstance(record, dict):
+            self._record_one(record)
+        elif isinstance(record, str):
+            self._record_one_json(record)
+        else:
+            print("Wrong record type")
+
+    def get_records(self):
+        return self.records
 
 
 class Librarian():
@@ -54,5 +74,12 @@ class Librarian():
 
 
 if __name__ == '__main__':
-    gram =Grammateus(location='test_records.jsonl')
+    # gram =Grammateus(location='test_records.jsonl')
+    # record = {
+    #     'name': 'test',
+    #     'content': 'test'
+    # }
+    # gram.record(record)
+    # del gram
+    another_gram = Grammateus(location='test_records.jsonl')
     print('ok')
