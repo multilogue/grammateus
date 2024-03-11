@@ -17,7 +17,8 @@ classifiers=[
 ]
 keywords = ["grammateus", "recording", "ai"]
 dependencies = [
-    "requests >= 2.31.0"
+    "requests >= 2.31.0",
+    "pydantic >= 2.6.3",
 ]
 [project.optional-dependencies]
 openai = ["openai >= 1.13.3"]
