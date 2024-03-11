@@ -5,8 +5,10 @@
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
+import dotenv
+dotenv.load_dotenv()
 import pytest
-from grammateus.entities import Grammateus
+from ..grammateus.entities import Grammateus
 
 
 @pytest.fixture

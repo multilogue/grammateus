@@ -6,7 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
 from os import path, getenv
-from pydantic import BaseModel
+# from pydantic import BaseModel
 from json import loads, dumps
 import jsonlines
 
@@ -14,7 +14,7 @@ import jsonlines
 default_base = getenv('GRAMMATEUS_LOCATION', './')
 
 
-class Grammateus(BaseModel):
+class Grammateus():
     location = str
     records = []
 
@@ -44,8 +44,9 @@ class Grammateus(BaseModel):
                 writer.write(serialized_record)
 
 
-class Librarian(BaseModel):
+class Librarian():
     location = str
+
 
     def __init__(self, location: str, **kwargs):
         self.location = location
@@ -53,4 +54,5 @@ class Librarian(BaseModel):
 
 
 if __name__ == '__main__':
-    pass
+    gram =Grammateus(location='test_records.jsonl')
+    print('ok')
