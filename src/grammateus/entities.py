@@ -28,29 +28,23 @@ class Grammateus():
 
     def _read_records(self):
         with jsonlines.open(file=self.location, mode='r') as reader:
-            self.records = [loads(line) for line in reader.iter()]
+            self.records = list(reader)
 
     def _record_one(self, record: dict):
         self.records.append(record)
-        serialized_record = dumps(record)
-        with jsonlines.open(file=self.location,
-                            mode='a') as writer:
-            writer.write(serialized_record)
+        with jsonlines.open(file=self.location, mode='a') as writer:
+            writer.write(record)
 
     def _record_one_json(self, record: str):
         record_dict = loads(record)
         self.records.append(record_dict)
-        with jsonlines.open(file=self.location,
-                            mode='a') as writer:
-            writer.write(record)
+        with jsonlines.open(file=self.location, mode='a') as writer:
+            writer.write(record_dict)
 
     def _record_many(self, records_list):
-        with jsonlines.open(file=self.location,
-                            mode='a') as writer:
-            for record in records_list:
-                self.records.append(record)
-                serialized_record = dumps(record)
-                writer.write(serialized_record)
+        with jsonlines.open(file=self.location, mode='a') as writer:
+            writer.write_all(records_list)
+        self.records.append(record)
 
     def record(self, record):
         if isinstance(record, dict):
@@ -66,7 +60,6 @@ class Grammateus():
 
 class Librarian():
     location = str
-
 
     def __init__(self, location: str, **kwargs):
         self.location = location
