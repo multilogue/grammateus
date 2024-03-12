@@ -74,12 +74,13 @@ class Librarian():
 
 
 if __name__ == '__main__':
-    # gram =Grammateus(location='test_records.jsonl')
-    # record = {
-    #     'name': 'test',
-    #     'content': 'test'
-    # }
-    # gram.record(record)
-    # del gram
+    gram =Grammateus(location='test_records.jsonl')
+    record = {
+        'name': 'test',
+        'content': 'test'
+    }
+    gram.record(record)
+    del gram
     another_gram = Grammateus(location='test_records.jsonl')
+
     print('ok')
