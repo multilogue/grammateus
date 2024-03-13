@@ -16,12 +16,16 @@ default_base = getenv('GRAMMATEUS_LOCATION', './')
 
 class Grammateus():
     location = str
+    log_location = f'{default_base}/AILogs/logs.jsonl'
     records = []
 
     def __init__(self,
                  location: str = 'records.jsonl',
                  **kwargs):
         self.location = f'{default_base}{location}'
+        self.log_location = f'{default_base}/AILogs/{location}'
+        if path.exists(self.log_location):
+            self._read_records()
         if path.exists(self.location):
             self._read_records()
         super(Grammateus, self).__init__(**kwargs)
@@ -53,6 +57,11 @@ class Grammateus():
             self._record_one_json(record)
         else:
             print("Wrong record type")
+
+    def log_event(self, event: dict):
+        self.records.append(record)
+        with jsonlines.open(file=self.log_location, mode='a') as writer:
+            writer.write(event)
 
     def get_records(self):
         return self.records
