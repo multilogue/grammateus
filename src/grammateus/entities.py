@@ -16,14 +16,14 @@ default_base = getenv('GRAMMATEUS_LOCATION', './')
 
 class Grammateus():
     location = str
-    log_location = f'{default_base}/AILogs/logs.jsonl'
+    log_location = str
     records = []
 
     def __init__(self,
                  location: str = 'records.jsonl',
                  **kwargs):
         self.location = f'{default_base}{location}'
-        self.log_location = f'{default_base}/AILogs/{location}'
+        self.log_location = f'{default_base}AILogs/{location}'
         if path.exists(self.log_location):
             self._read_records()
         if path.exists(self.location):
