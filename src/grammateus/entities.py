@@ -20,10 +20,11 @@ class Grammateus():
     records = []
 
     def __init__(self,
+                 origin: str, # anthropic, openai, gemini or palm
                  location: str = 'records.jsonl',
                  **kwargs):
-        self.location = f'{default_base}{location}'
-        self.log_location = f'{default_base}AILogs/{location}'
+        self.location = f'{default_base}{origin}/{location}'
+        self.log_location = f'{default_base}AILogs/{origin}/{location}'
         if path.exists(self.log_location):
             self._read_records()
         if path.exists(self.location):

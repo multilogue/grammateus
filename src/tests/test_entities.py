@@ -7,23 +7,24 @@ LICENSE file in the root directory of this source tree.
 """
 import dotenv
 dotenv.load_dotenv()
+from json import dumps
+import jsonlines
 import pytest
 from ..grammateus.entities import Grammateus
 
 
 @pytest.fixture
 def grammateus():
-    return Grammateus(location='test_records.jsonl')
+    return Grammateus(origin='anthropic', location='test_records.jsonl')
 
 
-class TestGrammateus(grammateus):
+def test_record():
+    assert False
 
-    def test__record_one(self, grammateus):
-        try:
-            grammateus._record_one(record={"test": "test"})
-        except Exception:
-            assert False
-        assert True
 
-    def test__record_many(self):
-        assert False
+def test_log_event():
+    assert False
+
+
+def test_get_records():
+    assert False
