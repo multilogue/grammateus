@@ -59,7 +59,6 @@ class Grammateus():
             print("Wrong record type")
 
     def log_event(self, event: dict):
-        self.records.append(record)
         with jsonlines.open(file=self.log_location, mode='a') as writer:
             writer.write(event)
 
