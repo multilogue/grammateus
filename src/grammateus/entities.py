@@ -6,7 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
 from os import path, getenv
-# from pydantic import BaseModel
 from json import loads, dumps
 import jsonlines
 
@@ -49,7 +48,6 @@ class Grammateus():
     def _record_many(self, records_list):
         with jsonlines.open(file=self.location, mode='a') as writer:
             writer.write_all(records_list)
-        self.records.append(record)
 
     def record(self, record):
         if isinstance(record, dict):
@@ -66,23 +64,11 @@ class Grammateus():
     def get_records(self):
         return self.records
 
-
-class Librarian():
-    location = str
-
-    def __init__(self, location: str, **kwargs):
-        self.location = location
-        super(Librarian, self).__init__(**kwargs)
+    def get_log(self):
+        with jsonlines.open(file=self.log_location, mode='r') as reader:
+            log = list(reader)
+        return log
 
 
 if __name__ == '__main__':
-    gram =Grammateus(location='test_records.jsonl')
-    record = {
-        'name': 'test',
-        'content': 'test'
-    }
-    gram.record(record)
-    del gram
-    another_gram = Grammateus(location='test_records.jsonl')
-
     print('ok')

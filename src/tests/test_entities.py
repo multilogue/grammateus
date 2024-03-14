@@ -18,13 +18,13 @@ def grammateus():
     return Grammateus(origin='anthropic', location='test_records.jsonl')
 
 
-def test_record():
+def test_record(grammateus):
     assert False
 
 
-def test_log_event():
+def test_log_event(grammateus):
     assert False
 
 
-def test_get_records():
+def test_get_records(grammateus):
     assert False
