@@ -7,9 +7,7 @@ LICENSE file in the root directory of this source tree.
 """
 
 from .entities import Grammateus
-from .anthropic_record import AnthropicRecord
 
 __all__ = [
-    'Grammateus',
-    'AnthropicRecord'
+    'Grammateus'
 ]
