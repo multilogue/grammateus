@@ -24,8 +24,6 @@ class Grammateus():
                  **kwargs):
         self.location = f'{default_base}{origin}/{location}'
         self.log_location = f'{default_base}AILogs/{origin}/{location}'
-        if path.exists(self.log_location):
-            self._read_records()
         if path.exists(self.location):
             self._read_records()
         super(Grammateus, self).__init__(**kwargs)
