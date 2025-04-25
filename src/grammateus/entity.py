@@ -6,7 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 """
 import os
-from json import loads
+import json
 
 
 default_base = os.getenv('GRAMMATEUS_LOCATION', './')
@@ -15,9 +15,9 @@ default_base = os.getenv('GRAMMATEUS_LOCATION', './')
 class Grammateus():
     yaml = None
     records_path = str
-    records=[]
+    records: list
     log_path = str
-    log = []
+    log : list
 
     def __init__(self,
                  records_path=None,
@@ -32,6 +32,7 @@ class Grammateus():
             self.yaml.indent(mapping=2, sequence=4, offset=2)
             # check if records file exists, create it if not
             self.records_path = records_path
+            self.records = []
             if os.path.exists(self.records_path):
                 self._read_records()
             else:
@@ -41,6 +42,7 @@ class Grammateus():
             import jsonlines as jl
             self.jl = jl
             self.log_path = log_path
+            self.log = []
             if os.path.exists(self.log_path):
                 self._read_log()
             else:
@@ -59,8 +61,8 @@ class Grammateus():
 
     def _log_one_json_string(self, event: str):
         try:
-            event_dict = loads(event)
-        except:
+            event_dict = json.loads(event)
+        except json.JSONDecodeError:
             raise Exception('can not sonvert record string to json')
         self.log.append(event_dict)
         with self.jl.open(file=self.records_path, mode='a') as writer:
@@ -75,19 +77,19 @@ class Grammateus():
         with open(self.records_path, 'r') as file:
             data = self.yaml.load(file) or []
         data.append(record)
-        with open('data.yaml', 'w') as file:
+        with open(self.records_path, 'w') as file:
             self.yaml.dump(data, file)
 
     def _record_one_json_string(self, record: str):
         try:
-            record_dict = loads(record)
-        except:
-            raise Exception('can not sonvert record string to json')
+            record_dict = json.loads(record)
+        except json.JSONDecodeError:
+            raise Exception('can not convert record string to json')
         self.records.append(record_dict)
         with open(self.records_path, 'r') as file:
             data = self.yaml.load(file) or []
         data.append(record_dict)
-        with open('data.yaml', 'w') as file:
+        with open(self.records_path, 'w') as file:
             self.yaml.dump(data, file)
 
     def _log_many(self, events_list):
