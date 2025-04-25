@@ -3,7 +3,7 @@ requires = ["setuptools>=67.0"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "grammateus"
-version = "0.0.13"
+version = "0.0.16"
 authors = [
     {name="Alexander Fedotov", email="alex.fedotov@aol.com"},
 ]
@@ -17,11 +17,12 @@ classifiers=[
 ]
 keywords = ["grammateus", "recording", "ai"]
 dependencies = [
-    "requests >= 2.31.0",
+    "requests >= 2.32.0",
     "jsonlines >= 4.0.0",
+    "pyyaml >= 6.0.0",
 ]
 [project.optional-dependencies]
-gemini_google = ["google-generativeai >= 0.4.1"]
+ruamel = ["ruamel.yaml >= 0.18.6"]
 [project.urls]
 "Homepage" = "https://github.com/multilogue/grammateus"
 "Bug Tracker" = "https://github.com/multilogue/grammateus/issues"
