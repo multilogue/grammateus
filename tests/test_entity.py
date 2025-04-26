@@ -10,7 +10,8 @@ import jsonlines as jl # Import jsonlines for reading in tests
 
 # Assuming your package structure allows this import
 # If not, you might need to adjust sys.path or how you run tests
-from src.grammateus.entity import Grammateus
+from grammateus.entity import Grammateus
+
 
 # Helper function to read yaml safely
 def read_yaml_records(file_path):
