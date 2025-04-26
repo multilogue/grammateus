@@ -12,7 +12,7 @@ import json
 default_base = os.getenv('GRAMMATEUS_LOCATION', './')
 
 
-class Grammateus():
+class Grammateus:
     yaml = None
     records_path = str
     records: list
@@ -63,10 +63,14 @@ class Grammateus():
         try:
             event_dict = json.loads(event)
         except json.JSONDecodeError:
-            raise Exception('can not sonvert record string to json')
+            raise Exception('can not convert record string to json')
         self.log.append(event_dict)
         with self.jl.open(file=self.records_path, mode='a') as writer:
             writer.write(event_dict)
+
+    def _log_many(self, events_list):
+        with self.jl.open(file=self.records_path, mode='a') as writer:
+            writer.write_all(events_list)
 
     def _read_records(self):
         with open(file=self.records_path, mode='r') as file:
@@ -85,16 +89,7 @@ class Grammateus():
             record_dict = json.loads(record)
         except json.JSONDecodeError:
             raise Exception('can not convert record string to json')
-        self.records.append(record_dict)
-        with open(self.records_path, 'r') as file:
-            data = self.yaml.load(file) or []
-        data.append(record_dict)
-        with open(self.records_path, 'w') as file:
-            self.yaml.dump(data, file)
-
-    def _log_many(self, events_list):
-        with self.jl.open(file=self.records_path, mode='a') as writer:
-            writer.write_all(events_list)
+        self._record_one(record_dict)
 
     def log_event(self, event: dict):
         if isinstance(event, dict):
