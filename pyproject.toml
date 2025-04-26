@@ -19,10 +19,8 @@ keywords = ["grammateus", "recording", "ai"]
 dependencies = [
     "requests >= 2.32.0",
     "jsonlines >= 4.0.0",
-    "pyyaml >= 6.0.0",
+    "ruamel.yaml >= 0.18.6",
 ]
-[project.optional-dependencies]
-ruamel = ["ruamel.yaml >= 0.18.6"]
 [project.urls]
 "Homepage" = "https://github.com/multilogue/grammateus"
 "Bug Tracker" = "https://github.com/multilogue/grammateus/issues"
