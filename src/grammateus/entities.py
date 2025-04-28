@@ -123,8 +123,6 @@ class Grammateus:
             self._log_many(what_to_log)
         else:
             print("Wrong record type")
-        with self.jl.open(file=self.log_path, mode='a') as writer:
-            writer.write(what_to_log)
 
     def get_log(self):
         self._read_log()
