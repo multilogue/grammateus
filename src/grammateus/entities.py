@@ -45,12 +45,8 @@ class Grammateus:
             self.records_path = location + 'records.yaml' if location else base_path + 'records.yaml'
         if os.path.exists(self.records_path):
             self._read_records()
-            # if self.records is None:
-            #     self.records = []
         else:
-            os.makedirs(os.path.dirname(self.records_path), exist_ok=True)
-            open(self.records_path, 'w').close()
-            self.records = []
+            self._init_records()
         # logging
         self.jl = jl
         if 'log_path' in kwargs:
@@ -60,10 +56,18 @@ class Grammateus:
         if os.path.exists(self.log_path):
             self._read_log()
         else:
-            os.makedirs(os.path.dirname(self.log_path), exist_ok=True)
-            open(self.log_path, 'w').close()
-            self.log = []
+            self._init_log()
         super(Grammateus, self).__init__(**kwargs)
+
+    def _init_records(self):
+        os.makedirs(os.path.dirname(self.records_path), exist_ok=True)
+        open(self.records_path, 'w').close()
+        self.records = []
+
+    def _init_log(self):
+        os.makedirs(os.path.dirname(self.log_path), exist_ok=True)
+        open(self.log_path, 'w').close()
+        self.log = []
 
     def _read_log(self):
         with self.jl.open(file=self.log_path, mode='r') as reader:
@@ -166,9 +170,35 @@ class Scribe(Grammateus):
         else:
             raise TypeError("Source must be either a string path or a Grammateus instance")
 
-    def records(self):
-        return self.grammateus.records
+    def records_to_log(self):
+        records = self.grammateus.get_records()
+        log = []
+        for record in records:
+            keys = record.keys()
+            key = next(iter(record.keys()))
+            if key == 'Human':
+                user_said = dict(role='user', parts=[dict(text=record['Human'])])
+                log.append(user_said)
+            elif key == 'machine':
+                text = record['machine']
+                if isinstance(text, str):
+                    utterance = text
+                elif isinstance(text, list):
+                    utterance = text[0]
+                else:
+                    utterance = ''
+                    print('unknown record type')
+                machine_said = dict(role='model', parts=[dict(text=utterance)])
+                log.append(machine_said)
+            else:
+                print('unknown record type')
+        # reset log
+        self.grammateus._init_log()
+        # add the recreated log
+        self.grammateus.log_it(log)
+        return self.grammateus.log
 
 
 if __name__ == '__main__':
-    print('ok')
+    # Test
+    ...
