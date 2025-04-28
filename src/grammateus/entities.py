@@ -79,12 +79,12 @@ class Grammateus:
         except json.JSONDecodeError:
             raise Exception('can not convert record string to json')
         self.log.append(event_dict)
-        with self.jl.open(file=self.records_path, mode='a') as writer:
+        with self.jl.open(file=self.log_path, mode='a') as writer:
             writer.write(event_dict)
 
     def _log_many(self, events_list):
         self.log.extend(events_list)
-        with self.jl.open(file=self.records_path, mode='a') as writer:
+        with self.jl.open(file=self.log_path, mode='a') as writer:
             writer.write_all(events_list)
 
     def _read_records(self):
