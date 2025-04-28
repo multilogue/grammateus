@@ -57,12 +57,12 @@ class Grammateus:
             self.log_path = kwargs['log_path']
         else:
             self.log_path = location + 'log.jsonl' if location else base_path + 'log.jsonl'
-            # self.log = []
         if os.path.exists(self.log_path):
             self._read_log()
         else:
             os.makedirs(os.path.dirname(self.log_path), exist_ok=True)
             open(self.log_path, 'w').close()
+            self.log = []
         super(Grammateus, self).__init__(**kwargs)
 
     def _read_log(self):
