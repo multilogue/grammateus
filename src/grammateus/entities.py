@@ -43,20 +43,21 @@ class Grammateus:
             self.records_path = kwargs['records_path']
         else:
             self.records_path = location + 'records.yaml' if location else base_path + 'records.yaml'
-            self.records = []
         if os.path.exists(self.records_path):
             self._read_records()
-            if self.records is None:
-                self.records = []
+            # if self.records is None:
+            #     self.records = []
         else:
             os.makedirs(os.path.dirname(self.records_path), exist_ok=True)
             open(self.records_path, 'w').close()
+            self.records = []
+        # logging
         self.jl = jl
         if 'log_path' in kwargs:
             self.log_path = kwargs['log_path']
         else:
             self.log_path = location + 'log.jsonl' if location else base_path + 'log.jsonl'
-            self.log = []
+            # self.log = []
         if os.path.exists(self.log_path):
             self._read_log()
         else:
@@ -89,7 +90,7 @@ class Grammateus:
 
     def _read_records(self):
         with open(file=self.records_path, mode='r') as file:
-            self.records = self.yaml.load(file)
+            self.records = self.yaml.load(file) or []
 
     def _record_one(self, record: dict):
         self.records.append(record)
