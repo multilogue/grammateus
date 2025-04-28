@@ -46,6 +46,8 @@ class Grammateus:
             self.records = []
         if os.path.exists(self.records_path):
             self._read_records()
+            if self.records is None:
+                self.records = []
         else:
             os.makedirs(os.path.dirname(self.records_path), exist_ok=True)
             open(self.records_path, 'w').close()
