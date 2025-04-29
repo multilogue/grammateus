@@ -22,10 +22,10 @@ def temp_dir(tmpdir):
 
 @pytest.fixture
 def sample_records():
-    """Fixture to provide sample records data."""
+    """Fixture to provide sample records of utterances."""
     return [
-        {"id": 1, "text": "Hello", "metadata": {"timestamp": "2025-04-29T12:00:00"}},
-        {"id": 2, "text": "World", "metadata": {"timestamp": "2025-04-29T12:01:00"}}
+        {"Human": "I would like you to say something"},
+        {"machine": "It's a beautiful day today, isn't it?"}
     ]
 
 
@@ -33,8 +33,8 @@ def sample_records():
 def sample_log():
     """Fixture to provide sample log events."""
     return [
-        {"event_type": "message", "content": "Hello", "timestamp": "2025-04-29T12:00:00"},
-        {"event_type": "response", "content": "World", "timestamp": "2025-04-29T12:01:00"}
+        {"role": "user", "content": "I would like you to say something"},
+        {"role": "model", "content": "It's a beautiful day today, isn't it?"}
     ]
 
 

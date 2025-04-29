@@ -49,7 +49,7 @@ class Grammateus:
             self._read_log()
         else:
             self._init_log()
-        super(Grammateus, self).__init__(**kwargs)
+        super(Grammateus, self).__init__()
 
     def _init_records(self):
         os.makedirs(os.path.dirname(self.records_path), exist_ok=True)
