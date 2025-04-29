@@ -3,11 +3,11 @@ requires = ["setuptools>=67.0"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "grammateus"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     {name="Alexander Fedotov", email="alex.fedotov@aol.com"},
 ]
-description = "A role similar to a scribe or notary. "
+description = "A role responsible for documenting legal proceedings in Greece"
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers=[
