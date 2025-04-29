@@ -7,15 +7,13 @@ LICENSE file in the root directory of this source tree.
 """
 import os
 import json
-from ruamel.yaml import YAML
+import yaml
 import jsonlines as jl
 
 base_path = os.getenv('GRAMMATEUS_LOCATION', './')
 
 
 class Grammateus:
-    yaml = None
-    jl = None
     records_path = str
     records: list
     log_path = str
@@ -33,11 +31,6 @@ class Grammateus:
             'records_path' - a complete path of a records file f.i. '/home/user/gramms/records.yaml';
             'log_path' - a complete path of a log file f.i. '/home/user/gramms/log.jsonl';
         """
-        # initialize and configure ruamel.YAML
-        self.yaml = YAML()
-        self.yaml.preserve_quotes = True
-        self.yaml.indent(mapping=2, sequence=4, offset=2)
-
         # check if records file exists, create it if not
         if 'records_path' in kwargs:
             self.records_path = kwargs['records_path']
@@ -48,7 +41,6 @@ class Grammateus:
         else:
             self._init_records()
         # logging
-        self.jl = jl
         if 'log_path' in kwargs:
             self.log_path = kwargs['log_path']
         else:
@@ -64,18 +56,22 @@ class Grammateus:
         open(self.records_path, 'w').close()
         self.records = []
 
+    def _read_records(self):
+        with open(file=self.records_path, mode='r') as file:
+            self.records = yaml.load(file, Loader=yaml.Loader) or []
+
     def _init_log(self):
         os.makedirs(os.path.dirname(self.log_path), exist_ok=True)
         open(self.log_path, 'w').close()
         self.log = []
 
     def _read_log(self):
-        with self.jl.open(file=self.log_path, mode='r') as reader:
+        with jl.open(file=self.log_path, mode='r') as reader:
             self.log = list(reader)
 
     def _log_one(self, event: dict):
         self.log.append(event)
-        with self.jl.open(file=self.log_path, mode='a') as writer:
+        with jl.open(file=self.log_path, mode='a') as writer:
             writer.write(event)
 
     def _log_one_json_string(self, event: str):
@@ -84,42 +80,28 @@ class Grammateus:
         except json.JSONDecodeError:
             raise Exception('can not convert record string to json')
         self.log.append(event_dict)
-        with self.jl.open(file=self.log_path, mode='a') as writer:
+        with jl.open(file=self.log_path, mode='a') as writer:
             writer.write(event_dict)
 
     def _log_many(self, events_list):
         self.log.extend(events_list)
-        with self.jl.open(file=self.log_path, mode='a') as writer:
+        with jl.open(file=self.log_path, mode='a') as writer:
             writer.write_all(events_list)
 
-    def _read_records(self):
-        with open(file=self.records_path, mode='r') as file:
-            self.records = self.yaml.load(file) or []
-
-    def _record_one(self, record: dict):
-        self.records.append(record)
-        with open(self.records_path, 'r') as file:
-            data = self.yaml.load(file) or []
-        data.append(record)
+    def _record(self):
         with open(self.records_path, 'w') as file:
-            self.yaml.dump(data, file)
-
-    def _record_many(self, records_list):
-        self.records.extend(records_list)
-        with open(self.records_path, 'r') as file:
-            data = self.yaml.load(file) or []
-        data.extend(records_list)
-        with open(self.records_path, 'w') as file:
-            self.yaml.dump(data, file)
-
-    def _record_one_json_string(self, record: str):
-        try:
-            record_dict = json.loads(record)
-        except json.JSONDecodeError:
-            raise Exception('can not convert record string to json')
-        self._record_one(record_dict)
+            yaml.dump(self.records, file, Dumper=yaml.Dumper)
 
     def log_it(self, what_to_log):
+        """ The main method for logging new events with the help of Grammateus.
+        If the event is a string, it will be converted to a dictionary.
+        If the event is a dictionary, it will be appended to log.
+        If there is a list of events, the log will be extended with by it.
+
+        !!!All the changes to the log will be immediately written to the records file.!!!
+
+        :param what_to_log:
+        """
         if isinstance(what_to_log, dict):
             self._log_one(what_to_log)
         elif isinstance(what_to_log, str):
@@ -130,20 +112,55 @@ class Grammateus:
             print("Wrong record type")
 
     def get_log(self):
+        """ Read the file and return the log (events list).
+        If you are sure that the log list of the object is up-to-date,
+        just access the .log attribute of Grammateus object without
+        calling this method (f.i. if you've just initialized the object).
+
+        :return: events list
+        """
         self._read_log()
         return self.log
 
-    def record_it(self, record):
-        if isinstance(record, dict):
-            self._record_one(record)
-        elif isinstance(record, str):
-            self._record_one_json_string(record)
-        elif isinstance(record, list):
-            self._record_many(record)
+    def record_it(self, what_to_record):
+        """ The main method for adding new records to the records to Grammateus.
+        If the record is a string, it will be converted to a dictionary.
+        If the record is a dictionary, it will be appended to the records list.
+        If the record is a list, the records list will be extended with by it.
+
+        !!!All the changes to the records list will be immediately written to the records file.!!!
+
+        :param what_to_record:
+        """
+        # Read what is in the file now.
+        self._read_records()
+        # if record is a dictionary - append it and overwrite
+        if isinstance(what_to_record, dict):
+            self.records.append(what_to_record)
+            self._record()
+        # if record is a string - convert it to dict, append and overwrite
+        elif isinstance(what_to_record, str):
+            try:
+                record_dict = json.loads(what_to_record)
+            except json.JSONDecodeError:
+                raise Exception('can not convert record string to json')
+            self.records.append(record_dict)
+            self._record()
+        # if record is a list - extend the recordslist with it and overwrite
+        elif isinstance(what_to_record, list):
+            self.records.extend(what_to_record)
+            self._record()
         else:
             print("Wrong record type")
 
     def get_records(self):
+        """ Read the file and return the records list.
+        If you are sure that the records list of the object is up-to-date,
+        just access the .records attribute of Grammateus object without
+        calling this method (f.i. if you've just initialized the object).
+
+        :return: records list
+        """
         self._read_records()
         return self.records
 
@@ -170,33 +187,35 @@ class Scribe(Grammateus):
         else:
             raise TypeError("Source must be either a string path or a Grammateus instance")
 
-    def records_to_log(self):
+    def records_to_log(self, format='twins'):
         records = self.grammateus.get_records()
         log = []
-        for record in records:
-            keys = record.keys()
-            key = next(iter(record.keys()))
-            if key == 'Human':
-                user_said = dict(role='user', parts=[dict(text=record['Human'])])
-                log.append(user_said)
-            elif key == 'machine':
-                text = record['machine']
-                if isinstance(text, str):
-                    utterance = text
-                elif isinstance(text, list):
-                    utterance = text[0]
+        if format == 'twins':
+            for record in records:
+                keys = record.keys()
+                key = next(iter(record.keys()))
+                if key == 'Human':
+                    user_said = dict(role='user', parts=[dict(text=record['Human'])])
+                    log.append(user_said)
+                elif key == 'machine':
+                    text = record['machine']
+                    if isinstance(text, str):
+                        utterance = text
+                    elif isinstance(text, list):
+                        utterance = text[0]
+                    else:
+                        utterance = ''
+                        print('unknown record type')
+                    machine_said = dict(role='model', parts=[dict(text=utterance)])
+                    log.append(machine_said)
                 else:
-                    utterance = ''
                     print('unknown record type')
-                machine_said = dict(role='model', parts=[dict(text=utterance)])
-                log.append(machine_said)
-            else:
-                print('unknown record type')
-        # reset log
-        self.grammateus._init_log()
-        # add the recreated log
-        self.grammateus.log_it(log)
-        return self.grammateus.log
+            # reset log
+            self.grammateus._init_log()
+            # add the recreated log
+            self.grammateus.log_it(log)
+        else:
+            print('unknown format')
 
 
 if __name__ == '__main__':

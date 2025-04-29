@@ -13,7 +13,6 @@ There are two main reasons for that: YAML lets you drop double quotes, and YAML 
 In particular, a human-readable record of conversation can look like this:
 ```yaml
 - instruction: Be an Abstract Intellect.      # this is a comment
-- human: Let's talk about Human Nature.       # this is a comment
+- Human: Let's talk about Human Nature.       # this is a comment
 - machine: Yes, let's do that, it's a complex topic...
 ```
-In order to preserve comments (this is what they call 'round-trip' compatibility) and have more control over the format of 'emission' you can use the `ruamel.yaml` library.
