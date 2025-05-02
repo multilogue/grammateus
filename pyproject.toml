@@ -21,6 +21,8 @@ dependencies = [
     "jsonlines >= 4.0.0",
     "PyYAML >= 6.0.2"
 ]
+[project.optional-dependencies]
+arrow = ["pyarrow >= 20.0.0"]
 [project.urls]
 "Homepage" = "https://github.com/multilogue/grammateus"
 "Bug Tracker" = "https://github.com/multilogue/grammateus/issues"

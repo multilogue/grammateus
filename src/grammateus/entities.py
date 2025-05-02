@@ -170,7 +170,7 @@ class Scribe(Grammateus):
         Grammateus functionality. Can work with its own files or with an
         existing Grammateus instance.
     """
-    def __init__(self, source):
+    def __init__(self, source, **kwargs):
         """ Initialize with either a base_path to files (string)
         or an existing Grammateus instance.
 
@@ -181,8 +181,9 @@ class Scribe(Grammateus):
             # Use existing Grammateus instance
             self.grammateus = source
         elif isinstance(source, str):
-            # Create a new Grammateus instance internally
-            super().__init__(source)
+            # Create a new Grammateus instance located at 'source' directory
+            # with kwargs that can have records_path and log_path
+            super().__init__(source, **kwargs)
             self.grammateus = self
         else:
             raise TypeError("Source must be either a string path or a Grammateus instance")
@@ -214,8 +215,60 @@ class Scribe(Grammateus):
             self.grammateus._init_log()
             # add the recreated log
             self.grammateus.log_it(log)
+        elif format == 'message':
+            for record in records:
+                keys = record.keys()
+                key = next(iter(record.keys()))
+                if key == 'Human':
+                    user_said = dict(role='user', content=record['Human'])
+                    log.append(user_said)
+                elif key == 'machine':
+                    text = record['machine']
+                    if isinstance(text, str):
+                        utterance = text
+                    elif isinstance(text, list):
+                        utterance = text[0]
+                    else:
+                        utterance = ''
+                        print('unknown record type')
+                    machine_said = dict(role='assistant', content=utterance)
+                    log.append(machine_said)
+                elif key == 'Deus':
+                    deus_said = dict(role='system', content=record['Deus']) # θεός
+                    log.append(deus_said)
+                else:
+                    print('unknown record type')
+
+        elif format == 'slave_coder':
+            for record in records:
+                keys = record.keys()
+                key = next(iter(record.keys()))
+                if key == 'Human':
+                    user_said = dict(role='user', content=record['Human'])
+                    log.append(user_said)
+                elif key == 'machine':
+                    text = record['machine']
+                    if isinstance(text, str):
+                        utterance = text
+                    elif isinstance(text, list):
+                        utterance = text[0]
+                    else:
+                        utterance = ''
+                        print('unknown record type')
+                    machine_said = dict(role='assistant', content=utterance)
+                    log.append(machine_said)
+                elif key == 'slave_coder':
+                    slave_coder_said = dict(role='developer', content=record['Human'])
+                    log.append(slave_coder_said)
+                else:
+                    print('unknown record type')
+
         else:
             print('unknown format')
+            # reset log
+        self.grammateus._init_log()
+        # add the recreated log
+        self.grammateus.log_it(log)
 
 
 if __name__ == '__main__':
