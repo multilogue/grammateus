@@ -239,6 +239,16 @@ class Scribe(Grammateus):
                 else:
                     print('unknown record type')
 
+        elif format == 'camelids':
+            """ Requires the `camelids` library to be installed.
+            """
+            try:
+                from camelids import encode
+                log = encode(records)
+            except ImportError:
+                print('camelids not installed')
+            ...
+
         elif format == 'slave_coder':
             for record in records:
                 keys = record.keys()
