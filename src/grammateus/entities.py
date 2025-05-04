@@ -192,29 +192,33 @@ class Scribe(Grammateus):
         records = self.grammateus.get_records()
         log = []
         if format == 'twins':
-            for record in records:
-                keys = record.keys()
-                key = next(iter(record.keys()))
-                if key == 'Human':
-                    user_said = dict(role='user', parts=[dict(text=record['Human'])])
-                    log.append(user_said)
-                elif key == 'machine':
-                    text = record['machine']
-                    if isinstance(text, str):
-                        utterance = text
-                    elif isinstance(text, list):
-                        utterance = text[0]
-                    else:
-                        utterance = ''
-                        print('unknown record type')
-                    machine_said = dict(role='model', parts=[dict(text=utterance)])
-                    log.append(machine_said)
-                else:
-                    print('unknown record type')
-            # reset log
-            self.grammateus._init_log()
-            # add the recreated log
-            self.grammateus.log_it(log)
+            """ Requires the `camelids` library to be installed.
+            """
+            try:
+                from castor_pollux import encode
+                log = encode(records)
+            except ImportError:
+                print('castor_pollux not installed')
+            # for record in records:
+            #     keys = record.keys()
+            #     key = next(iter(record.keys()))
+            #     if key == 'Human':
+            #         user_said = dict(role='user', parts=[dict(text=record['Human'])])
+            #         log.append(user_said)
+            #     elif key == 'machine':
+            #         text = record['machine']
+            #         if isinstance(text, str):
+            #             utterance = text
+            #         elif isinstance(text, list):
+            #             utterance = text[0]
+            #         else:
+            #             utterance = ''
+            #             print('unknown record type')
+            #         machine_said = dict(role='model', parts=[dict(text=utterance)])
+            #         log.append(machine_said)
+            #     else:
+            #         print('unknown record type')
+
         elif format == 'message':
             for record in records:
                 keys = record.keys()
@@ -233,8 +237,8 @@ class Scribe(Grammateus):
                         print('unknown record type')
                     machine_said = dict(role='assistant', content=utterance)
                     log.append(machine_said)
-                elif key == 'Deus':
-                    deus_said = dict(role='system', content=record['Deus']) # θεός
+                elif key == 'instruction':
+                    deus_said = dict(role='system', content=record['instruction']) # θεός
                     log.append(deus_said)
                 else:
                     print('unknown record type')
@@ -247,7 +251,6 @@ class Scribe(Grammateus):
                 log = encode(records)
             except ImportError:
                 print('camelids not installed')
-            ...
 
         elif format == 'slave_coder':
             for record in records:
